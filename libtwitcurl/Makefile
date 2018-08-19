@@ -5,13 +5,13 @@
 
 LIBNAME = twitcurl
 SRC = $(LIBNAME).cpp
-STAGING_DIR = 
+STAGING_DIR = RISCVOUT
 INCLUDE_DIR = $(STAGING_DIR)/usr/include
 LINCLUDE_DIR = $(STAGING_DIR)/usr/local/include
 LIBRARY_DIR = $(STAGING_DIR)/usr/lib
 LLIBRARY_DIR = $(STAGING_DIR)/usr/local/lib
 LDFLAGS += -Wl,-rpath-link=$(STAGING_DIR)/usr/lib
-CC = g++
+CC = riscv64-unknown-linux-gnu-g++
 REMOVE = rm -f
 COPY = cp
 REMOTEIP = 192.168.1.30
@@ -34,8 +34,8 @@ CFLAGS =$(CDEFS) $(CINCS) $(CSTANDARD)
 all: target
 
 target: $(SRC) $(LIBNAME).h
-	$(CC) -Wall -fPIC -c -I$(INCLUDE_DIR) $(SRC) oauthlib.cpp urlencode.cpp base64.cpp HMAC_SHA1.cpp SHA1.cpp
-	$(CC) -shared -Wl,-soname,lib$(LIBNAME).so.1 $(LDFLAGS) -o lib$(LIBNAME).so.1.0 *.o -L$(LIBRARY_DIR) -lcurl
+	$(CC) -Wall twitterClient.cpp twitcurl.cpp oauthlib.cpp urlencode.cpp base64.cpp HMAC_SHA1.cpp SHA1.cpp -o twitterClient --sysroot=../../firesim/sw/firesim-software/buildroot/output/host/usr/riscv64-buildroot-linux-gnu/sysroot -lcurl
+	#$(CC) -shared -Wl,-soname,lib$(LIBNAME).so.1 $(LDFLAGS) -o lib$(LIBNAME).so.1.0 *.o -L$(LIBRARY_DIR) -lcurl --sysroot=../../firesim/sw/firesim-software/buildroot/output/host/usr/riscv64-buildroot-linux-gnu/sysroot
 
 #clean project.
 clean:

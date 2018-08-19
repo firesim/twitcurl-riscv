@@ -8,7 +8,7 @@ void printUsage()
 int main( int argc, char* argv[] )
 {
     /* Get username and password from command line args */
-    std::string userName( "" );
+/*    std::string userName( "" );
     std::string passWord( "" );
     if( argc > 4 )
     {
@@ -34,52 +34,55 @@ int main( int argc, char* argv[] )
         printUsage();
         return 0;
     }
-
+*/
     twitCurl twitterObj;
     std::string tmpStr, tmpStr2;
     std::string replyMsg;
     char tmpBuf[1024];
 
     /* Set twitter username and password */
-    twitterObj.setTwitterUsername( userName );
-    twitterObj.setTwitterPassword( passWord );
+//    twitterObj.setTwitterUsername( userName );
+//    twitterObj.setTwitterPassword( passWord );
 
-    /* Set proxy server usename, password, IP and port (if present) */
-    memset( tmpBuf, 0, 1024 );
-    printf( "\nDo you have a proxy server configured (0 for no; 1 for yes): " );
-    fgets( tmpBuf, sizeof( tmpBuf ), stdin );
-    tmpStr = tmpBuf;
-    if( std::string::npos != tmpStr.find( "1" ) )
-    {
-        memset( tmpBuf, 0, 1024 );
-        printf( "\nEnter proxy server IP: " );
-        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
-        tmpStr = tmpBuf;
-        twitterObj.setProxyServerIp( tmpStr );
+//    /* Set proxy server usename, password, IP and port (if present) */
+//    memset( tmpBuf, 0, 1024 );
+//    printf( "\nDo you have a proxy server configured (0 for no; 1 for yes): " );
+//    fgets( tmpBuf, sizeof( tmpBuf ), stdin );
+//    tmpStr = tmpBuf;
+//    if( std::string::npos != tmpStr.find( "1" ) )
+//    {
+//        memset( tmpBuf, 0, 1024 );
+//        printf( "\nEnter proxy server IP: " );
+//        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
+//        tmpStr = tmpBuf;
+//        twitterObj.setProxyServerIp( tmpStr );
+//
+//        memset( tmpBuf, 0, 1024 );
+//        printf( "\nEnter proxy server port: " );
+//        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
+//        tmpStr = tmpBuf;
+//        twitterObj.setProxyServerPort( tmpStr );
+//
+//        memset( tmpBuf, 0, 1024 );
+//        printf( "\nEnter proxy server username: " );
+//        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
+//        tmpStr = tmpBuf;
+//        twitterObj.setProxyUserName( tmpStr );
+//
+//        memset( tmpBuf, 0, 1024 );
+//        printf( "\nEnter proxy server password: " );
+//        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
+//        tmpStr = tmpBuf;
+//        twitterObj.setProxyPassword( tmpStr );
+//    }
 
-        memset( tmpBuf, 0, 1024 );
-        printf( "\nEnter proxy server port: " );
-        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
-        tmpStr = tmpBuf;
-        twitterObj.setProxyServerPort( tmpStr );
 
-        memset( tmpBuf, 0, 1024 );
-        printf( "\nEnter proxy server username: " );
-        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
-        tmpStr = tmpBuf;
-        twitterObj.setProxyUserName( tmpStr );
-
-        memset( tmpBuf, 0, 1024 );
-        printf( "\nEnter proxy server password: " );
-        fgets( tmpBuf, sizeof( tmpBuf ), stdin );
-        tmpStr = tmpBuf;
-        twitterObj.setProxyPassword( tmpStr );
-    }
+    printf("Use twcurl on the host to setup authentiation keys in twitterClient_token_key.txt and twitterClient_token_secret.txt first! Authentication in this client is broken.\n");
 
     /* OAuth flow begins */
     /* Step 0: Set OAuth related params. These are got by registering your app at twitter.com */
-    twitterObj.getOAuth().setConsumerKey( std::string( "2Kdg60HDmZEu2NXIp7MRMBQIm" ) );
-    twitterObj.getOAuth().setConsumerSecret( std::string( "IQcdiWnJd1bsWHytbLmSZa4aNxlPJ5Jr9ZjwOPjiDp31Tyactn" ) );
+    twitterObj.getOAuth().setConsumerKey( std::string( "YOUR KEY HERE" ) );
+    twitterObj.getOAuth().setConsumerSecret( std::string( "YOUR SECRET HERE" ) );
 
     /* Step 1: Check if we alredy have OAuth access token from a previous run */
     std::string myOAuthAccessTokenKey("");
@@ -104,7 +107,8 @@ int main( int argc, char* argv[] )
     if( myOAuthAccessTokenKey.size() && myOAuthAccessTokenSecret.size() )
     {
         /* If we already have these keys, then no need to go through auth again */
-        printf( "\nUsing:\nKey: %s\nSecret: %s\n\n", myOAuthAccessTokenKey.c_str(), myOAuthAccessTokenSecret.c_str() );
+        printf("Using existing auth keys.\n");
+        // printf( "\nUsing:\nKey: %s\nSecret: %s\n\n", myOAuthAccessTokenKey.c_str(), myOAuthAccessTokenSecret.c_str() );
 
         twitterObj.getOAuth().setOAuthTokenKey( myOAuthAccessTokenKey );
         twitterObj.getOAuth().setOAuthTokenSecret( myOAuthAccessTokenSecret );
@@ -161,75 +165,17 @@ int main( int argc, char* argv[] )
     }
     /* OAuth flow ends */
 
-    /* Account credentials verification */
-    if( twitterObj.accountVerifyCredGet() )
-    {
-        twitterObj.getLastWebResponse( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", replyMsg.c_str() );
-    }
-    else
-    {
-        twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", replyMsg.c_str() );
-    }
-
-    /* Get followers' ids */
-    std::string nextCursor("");
-    std::string searchUser("nextbigwhat");
-    do
-    {
-        if( twitterObj.followersIdsGet( nextCursor, searchUser ) )
-        {
-            twitterObj.getLastWebResponse( replyMsg );
-            printf( "\ntwitterClient:: twitCurl::followersIdsGet for user [%s] web response:\n%s\n",
-                    searchUser.c_str(), replyMsg.c_str() );
-
-            // JSON: "next_cursor":1422208797779779359,
-            nextCursor = "";
-            size_t nNextCursorStart = replyMsg.find("next_cursor");
-            if( std::string::npos == nNextCursorStart )
-            {
-                nNextCursorStart += strlen("next_cursor:\"");
-                size_t nNextCursorEnd = replyMsg.substr(nNextCursorStart).find(",");
-                if( std::string::npos != nNextCursorEnd )
-                {
-                    nextCursor = replyMsg.substr(nNextCursorStart, (nNextCursorEnd - nNextCursorStart));
-                    printf("\nNEXT CURSOR: %s\n\n\n\n\n", nextCursor.c_str());
-                }
-            }
-        }
-        else {
-            twitterObj.getLastCurlError( replyMsg );
-            printf( "\ntwitterClient:: twitCurl::followersIdsGet error:\n%s\n", replyMsg.c_str() );
-            break;
-        }
-    } while( !nextCursor.empty() && nextCursor.compare("0") );
-
-    /* Get block list */
-    nextCursor = "";
-    if( twitterObj.blockListGet( nextCursor, false, false ) )
-    {
-        twitterObj.getLastWebResponse( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockListGet web response:\n%s\n", replyMsg.c_str() );
-    }
-    else
-    {
-        twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockListGet error:\n%s\n", replyMsg.c_str() );
-    }
-
-    /* Get blocked ids */
-    nextCursor = "";
-    if( twitterObj.blockIdsGet( nextCursor, true ) )
-    {
-        twitterObj.getLastWebResponse( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockIdsGet web response:\n%s\n", replyMsg.c_str() );
-    }
-    else
-    {
-        twitterObj.getLastCurlError( replyMsg );
-        printf( "\ntwitterClient:: twitCurl::blockIdsGet error:\n%s\n", replyMsg.c_str() );
-    }
+//    /* Account credentials verification */
+//    if( twitterObj.accountVerifyCredGet() )
+//    {
+//        twitterObj.getLastWebResponse( replyMsg );
+//        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet web response:\n%s\n", replyMsg.c_str() );
+//    }
+//    else
+//    {
+//        twitterObj.getLastCurlError( replyMsg );
+//        printf( "\ntwitterClient:: twitCurl::accountVerifyCredGet error:\n%s\n", replyMsg.c_str() );
+//    }
 
     /* Post a new status message */
     memset( tmpBuf, 0, 1024 );
@@ -247,6 +193,8 @@ int main( int argc, char* argv[] )
         twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::statusUpdate error:\n%s\n", replyMsg.c_str() );
     }
+
+    exit(0);
 
     /* Post a new reply */
     memset( tmpBuf, 0, 1024 );
@@ -268,7 +216,6 @@ int main( int argc, char* argv[] )
         twitterObj.getLastCurlError( replyMsg );
         printf( "\ntwitterClient:: twitCurl::statusUpdate error:\n%s\n", replyMsg.c_str() );
     }
-
 
     /* Search a string */
     printf( "\nEnter string to search: " );
