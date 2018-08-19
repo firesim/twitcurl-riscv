@@ -12,9 +12,9 @@ How to run on a RISC-V system with internet access
 4. Create an app on twitter developer's site
 5. Paste consumer keys in the twitterClient.cpp file.
 6. Install twurl on a host machine to handle OAuth, take the keys it puts in ~/.twurlrc and copy them into files named twitterClient_token_key.txt and twitterClient_token_secret.txt.
-7. Run make here
+7. Run make in libtwitcurl. The lib/client distinction is meaningless in this fork, it just produces one binary called twitterClient.
 8. Configure buildroot with libopenssl and libcurl
-9. Copy twitterClient, twitterClient_token_key.txt, and twitterClient_token_secret.txt into firesim/sw/firesim-software/buildroot-overlay
+9. Copy twitterClient, twitterClient_token_key.txt, and twitterClient_token_secret.txt into firesim/sw/firesim-software/buildroot-overlay/
 10. Build images in firesim-software
 11. Boot a FireSim simulation, connect to the outside network as described in docs
 12. On the simulated system, set the date correctly by running date on a host machine, then giving this output to date -s in the simulation
