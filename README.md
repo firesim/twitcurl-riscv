@@ -1,3 +1,28 @@
+## Posting to twitter from a RISC-V system
+
+This is 100% demo-engineering. Original codebase is:
+
+https://github.com/swatkat/twitcurl
+
+How to run on a RISC-V system with internet access
+
+1. assumes you have RISC-V toolchain available as installed by firesim
+2. assumes you're using firesim-software 
+3. sysroot is currently hardcoded (see Makefile)
+4. Create an app on twitter developer's site
+5. Paste consumer keys in the twitterClient.cpp file.
+6. Install twurl on a host machine to handle OAuth, take the keys it puts in ~/.twurlrc and copy them into files named twitterClient_token_key.txt and twitterClient_token_secret.txt.
+7. Run make here
+8. Configure buildroot with libopenssl and libcurl
+9. Copy twitterClient, twitterClient_token_key.txt, and twitterClient_token_secret.txt into firesim/sw/firesim-software/buildroot-overlay
+10. Build images in firesim-software
+11. Boot a FireSim simulation, connect to the outside network as described in docs
+12. On the simulated system, set the date correctly by running date on a host machine, then giving this output to date -s in the simulation
+13. In the simulation, cd / and run ./twitterClient
+
+
+## Original project's readme below:
+
 ### Introduction: ###
 **twitcurl** is a pure C++ library for twitter APIs. twitcurl uses cURL for handling HTTP requests and responses. twitcurl has been tested on Microsoft Windows, Ubuntu and Debian. In fact, it works just fine on any operating system that supports cURL.
   * v1.1 Twitter REST APIs
